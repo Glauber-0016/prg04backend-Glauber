@@ -1,6 +1,11 @@
 package br.com.ifba.usuario.controller;
 
+import br.com.ifba.infrastructure.exception.ResourceNotFoundException;
+import br.com.ifba.usuario.dto.UsuarioGetResponseDto;
+import br.com.ifba.usuario.dto.UsuarioLoginDto;
+import br.com.ifba.usuario.dto.UsuarioPostRequestDto;
 import br.com.ifba.usuario.entity.Usuario;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,72 +13,73 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.concurrent.atomic.AtomicLong;
 
-    /**
-     *
-     * @author Glauber
-     */
+@RestController
+@RequestMapping("/usuarios")
+public class UsuarioController {
+    private final List<Usuario> usuarios = Collections.synchronizedList(new ArrayList<>());
+    private final AtomicLong contadorId = new AtomicLong();
 
-    @RestController
-    @RequestMapping("/usuarios")
-    public class UsuarioController {
-        private final List<Usuario> usuarios = Collections.synchronizedList(new ArrayList<>());
+    @PostMapping
+    public ResponseEntity<UsuarioGetResponseDto> create(@Valid @RequestBody UsuarioPostRequestDto dto) {
+        Usuario novoUsuario = new Usuario();
+        novoUsuario.setId(contadorId.incrementAndGet());
+        novoUsuario.setNome(dto.getNome());
+        novoUsuario.setSenha(dto.getSenha());
+        usuarios.add(novoUsuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UsuarioGetResponseDto(novoUsuario.getNome(), novoUsuario.getSenha()));
+    }
 
-        private final AtomicLong contadorId = new AtomicLong();
+    @GetMapping
+    public ResponseEntity<List<UsuarioGetResponseDto>> getAll() {
+        List<UsuarioGetResponseDto> responseList = usuarios.stream()
+                .map(usuario -> new UsuarioGetResponseDto(usuario.getNome(), usuario.getSenha()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responseList);
+    }
 
-        // GET /usuarios - Retorna todos os usuários
-        @GetMapping
-        public ResponseEntity<List<Usuario>> getAll() {
-            return ResponseEntity.ok(usuarios);
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioGetResponseDto> getById(@PathVariable Long id) {
+        Usuario usuario = usuarios.stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o ID: " + id));
 
-        // POST /usuarios - Cria um novo usuário
-        @PostMapping
-        public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
-            usuario.setId(contadorId.incrementAndGet()); // Gera e define um novo ID
-            usuarios.add(usuario);
-            return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
-        }
+        return ResponseEntity.ok(new UsuarioGetResponseDto(usuario.getNome(), usuario.getSenha()));
+    }
 
-        // GET /usuarios/{id} - Busca um usuário pelo ID
-        @GetMapping("/{id}")
-        public ResponseEntity<Usuario> getById(@PathVariable Long id) {
-            Optional<Usuario> usuarioEncontrado = usuarios.stream()
-                    .filter(u -> u.getId().equals(id))
-                    .findFirst();
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioGetResponseDto> update(@PathVariable Long id, @Valid @RequestBody UsuarioPostRequestDto dto) {
+        Usuario usuarioExistente = usuarios.stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o ID: " + id));
 
+        usuarioExistente.setNome(dto.getNome());
+        usuarioExistente.setSenha(dto.getSenha());
+        return ResponseEntity.ok(new UsuarioGetResponseDto(usuarioExistente.getNome(), usuarioExistente.getSenha()));
+    }
 
-            return usuarioEncontrado.map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
-        }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        Usuario usuarioParaDeletar = usuarios.stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o ID: " + id));
 
-        // PUT /usuarios/{id} - Atualiza um usuário existente
-        @PutMapping("/{id}")
-        public ResponseEntity<Usuario> update(@PathVariable Long id, @RequestBody Usuario usuarioDetails) {
-            for (int i = 0; i < usuarios.size(); i++) {
-                Usuario usuarioExistente = usuarios.get(i);
-                if (usuarioExistente.getId().equals(id)) {
+        usuarios.remove(usuarioParaDeletar);
+        return ResponseEntity.noContent().build();
+    }
 
-                    usuarioDetails.setId(id);
-                    usuarios.set(i, usuarioDetails);
-                    return ResponseEntity.ok(usuarioDetails);
-                }
-            }
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@Valid @RequestBody UsuarioLoginDto loginDto) {
+        usuarios.stream()
+                .filter(u -> u.getNome().equals(loginDto.getNome()) && u.getSenha().equals(loginDto.getSenha()))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Nome de usuário ou senha inválidos."));
 
-            return ResponseEntity.notFound().build();
-        }
-
-        // DELETE /usuarios/{id} - Deleta um usuário pelo ID
-        @DeleteMapping("/{id}")
-        public ResponseEntity<Void> delete(@PathVariable Long id) {
-            boolean foiRemovido = usuarios.removeIf(usuario -> usuario.getId().equals(id));
-
-            if (foiRemovido) {
-                return ResponseEntity.noContent().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        }
+        return ResponseEntity.ok("Login bem-sucedido!");
+    }
 }

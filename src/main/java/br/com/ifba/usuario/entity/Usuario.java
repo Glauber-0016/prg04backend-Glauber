@@ -4,28 +4,22 @@ import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import java.io.Serializable;
-
-/**
- *
- * @author Glauber
- */
+import lombok.*;
 
 @Entity
 @Table(name = "usuarios")
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@Getter @Setter
-public class Usuario extends PersistenceEntity implements Serializable {
-    @Column(name = "nome", nullable = false)
+@EqualsAndHashCode(callSuper = true)
+public class Usuario extends PersistenceEntity {
+
+    @Column(name = "nome", unique = true, nullable = false)
     private String nome;
+
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
 
     @Column(name = "senha", nullable = false)
     private String senha;
-
-
 }

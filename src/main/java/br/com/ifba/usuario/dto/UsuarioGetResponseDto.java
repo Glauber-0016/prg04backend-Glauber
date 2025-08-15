@@ -1,18 +1,26 @@
 package br.com.ifba.usuario.dto;
 
+import br.com.ifba.usuario.entity.Usuario;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
 public class UsuarioGetResponseDto {
+
+    @JsonProperty(value = "id")
+    private Long id;
 
     @JsonProperty(value = "nome")
     private String nome;
 
-    @JsonProperty(value = "senha")
-    private String senha;
+    @JsonProperty(value = "email")
+    private String email;
+
+    public UsuarioGetResponseDto(Usuario usuario) {
+        this.id = usuario.getId();
+        this.nome = usuario.getNome();
+        this.email = usuario.getEmail();
+    }
 }

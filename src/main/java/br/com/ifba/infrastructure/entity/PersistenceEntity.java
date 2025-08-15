@@ -17,6 +17,6 @@ import lombok.Setter;
 public class PersistenceEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    public Long id;
 
 }

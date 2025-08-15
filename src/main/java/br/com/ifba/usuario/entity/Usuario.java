@@ -27,7 +27,5 @@ public class Usuario extends PersistenceEntity implements Serializable {
     @Column(name = "senha", nullable = false)
     private String senha;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+
 }

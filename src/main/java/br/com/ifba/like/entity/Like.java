@@ -5,20 +5,17 @@ import br.com.ifba.comment.entity.Comment;
 import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import br.com.ifba.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
 @Entity
 @Table(name = "like_table")
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class Like extends PersistenceEntity implements Serializable {
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

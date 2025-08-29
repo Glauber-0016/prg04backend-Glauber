@@ -10,13 +10,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 /**
  * Controller REST para gerenciar as operações relacionadas a Artigos.
  * Define os endpoints da API para criar, buscar e listar artigos.
  */
 @RestController
 @RequestMapping("/api/articles") // Define o caminho base para todos os endpoints neste controller
+@CrossOrigin(origins = "http://localhost:3000") // Permite requisições do frontend
 public class ArticleController {
 
     /**

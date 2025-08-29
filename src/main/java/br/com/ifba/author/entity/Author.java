@@ -1,29 +1,42 @@
 package br.com.ifba.author.entity;
 
-import br.com.ifba.infrastructure.entity.PersistenceEntity;
+import br.com.ifba.article.entity.Article;
 import br.com.ifba.book.entity.Book;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "author")
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class Author extends PersistenceEntity implements Serializable {
-    @Column(name = "name", nullable = false)
-    private String name;
+@Table(name = "authors")
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class Author extends PersistenceEntity {
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Book> books;
+    @Column(name = "author_name", nullable = false)
+    private String authorName;
+
+    @Lob
+    @Column(name = "biography")
+    private String biography;
+
+    @Column(name = "author_photo")
+    private String authorPhoto;
+
+
+    @OneToMany(
+            mappedBy = "author",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Book> books = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "authors")
+    private Set<Article> articles = new HashSet<>();
 
 }

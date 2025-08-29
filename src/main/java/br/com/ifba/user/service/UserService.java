@@ -5,6 +5,8 @@ import br.com.ifba.user.dto.UserCreateDTO;
 import br.com.ifba.user.dto.UserResponseDTO;
 import br.com.ifba.user.entity.User;
 import br.com.ifba.user.repository.UserRepository;
+import br.com.ifba.profile.entity.UserProfile;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,6 +50,10 @@ public class UserService {
         user.setEmail(createDTO.getEmail());
         user.setPassword(passwordEncoder.encode(createDTO.getPassword()));
         user.setRole("LEITOR");
+
+        UserProfile newProfile = new UserProfile();
+        user.setUserProfile(newProfile);
+        newProfile.setUser(user);
 
         User savedUser = userRepository.save(user);
         return toResponseDTO(savedUser);

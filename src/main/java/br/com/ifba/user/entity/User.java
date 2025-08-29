@@ -4,6 +4,8 @@ import br.com.ifba.article.entity.Article;
 import br.com.ifba.comment.entity.Comment;
 import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import br.com.ifba.like.entity.Like;
+import br.com.ifba.profile.entity.UserProfile;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,5 +45,9 @@ public class User extends PersistenceEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Like> likes;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private UserProfile userProfile;
 
 }

@@ -7,6 +7,9 @@ import br.com.ifba.article.repository.ArticleRepository;
 import br.com.ifba.infrastructure.exception.ResourceNotFoundException;
 import br.com.ifba.user.entity.User;
 import br.com.ifba.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,12 +48,11 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public List<ArticleResponseDTO> findAll() {
-        return articleRepository.findAll()
-                .stream()
-                .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+    public Page<ArticleResponseDTO> findAll(Pageable pageable) {
+        Page<Article> articlePage = articleRepository.findAll(pageable);
+        return articlePage.map(this::toResponseDTO);
     }
+
 
     @Transactional(readOnly = true)
     public ArticleResponseDTO findById(Long id) {

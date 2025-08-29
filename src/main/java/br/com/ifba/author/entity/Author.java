@@ -13,17 +13,17 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "autor")
+@Table(name = "author")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class Author extends PersistenceEntity implements Serializable {
-    @Column(name = "nome", nullable = false)
-    private String nome;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Book> books;
 
 }

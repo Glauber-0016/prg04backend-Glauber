@@ -14,15 +14,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "livro")
+@Table(name = "book")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
 public class Book extends PersistenceEntity implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long bookId;
-
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;

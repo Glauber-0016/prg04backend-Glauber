@@ -2,6 +2,7 @@ package br.com.ifba.article.entity;
 
 import br.com.ifba.author.entity.Author;
 import br.com.ifba.comment.entity.Comment;
+import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import br.com.ifba.like.entity.Like;
 import br.com.ifba.user.entity.User;
 import jakarta.persistence.*;
@@ -10,7 +11,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.awt.print.Book;
+import br.com.ifba.book.entity.Book;
+
+
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -22,11 +26,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Article {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long articleId;
-
+public class Article extends PersistenceEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

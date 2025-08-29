@@ -1,6 +1,7 @@
 package br.com.ifba.comment.entity;
 
 import br.com.ifba.article.entity.Article;
+import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import br.com.ifba.like.entity.Like;
 import br.com.ifba.user.entity.User;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -18,11 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Comment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
-
+public class Comment extends PersistenceEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

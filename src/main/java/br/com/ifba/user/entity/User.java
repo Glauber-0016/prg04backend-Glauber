@@ -11,21 +11,21 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "usuarios")
+@Table(name = "user")
 @Getter
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class User extends PersistenceEntity {
 
-    @Column(name = "nome", unique = true, nullable = false)
-    private String nome;
+    @Column(name = "name", unique = true, nullable = false)
+    private String name;
 
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "senha", nullable = false)
-    private String senha;
+    @Column(name = "password", nullable = false)
+    private String password;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date registerDate = new Date();
